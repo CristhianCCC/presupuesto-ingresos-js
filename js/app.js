@@ -5,7 +5,7 @@ const ingresos = [
 
 const egresos = [
     new Egreso('Comida', 300),
-    new Egreso('Arriendo', 2000),
+    new Egreso('mercado', 2000),
 ];
 
 
@@ -78,13 +78,25 @@ const crearIngresoHTML = (ingreso) => {
                         <div class="elemento_valor">+ ${ingreso.valor}</div>
                     <div class="elemento_eliminar"><button class="elemento_eliminar--btn">
                     <ion-icon name="close-circle-outline"
-                    onclick ="elimninarIngreso(${ingreso.id})"></ion-icon>
+                    onclick ="eliminarIngreso(${ingreso.id})"></ion-icon>
                     </button>
                     </div>
                     </div>
     </div>
     `
     return ingresoHTML;
+}
+
+//para eliminar ingreso
+//se pasa como parametro el id para que al recorrer el arreglo se elimine el id correspondiente al elemento que se desea eliminar
+const eliminarIngreso = (id) => {
+    //findIndex va a iniciar la busqueda, posteriormente se declara una funcion flecha con la cual se accedera al arreglo con el valor del id y que sea igual a id el cual es el parametro para detener la busqueda del mismo
+    let indiceEliminar = ingresos.findIndex( ingreso => ingreso.id === id);
+    //splice funciona para eliminar elementos, en este caso del arreglo y posteriormente cuantos elementos se van a eliminar, "1"
+    ingresos.splice(indiceEliminar, 1);
+    //despues de eliminarlo, se deben volver a cargar tanto cabecero como listado de ingresos
+    cargarCabecero();
+    cargarIngresos();
 }
 
 //para cargar los egresos en el listado html
@@ -104,16 +116,39 @@ const crearEgresoHTML = (egreso) => {
                         <div class="elemento_valor">- ${formatoMoneda(egreso.valor)}</div>
                         <div class="elemento_porcentaje">${formatoPorcentaje(egreso.valor/totalEgresos())}</div>
                         <div class="elemento_eliminar">
-                            <button class="elemento_eliminar--btn"><ion-icon name="close-circle-outline"></ion-icon></button>
+                            <button class="elemento_eliminar--btn"><ion-icon name="close-circle-outline" onclick = 'eliminarEgreso(${egreso.id})'></ion-icon></button>
                         </div>
                     </div>
                 </div>`
                 return egresoHTML;
 }
 
+//para eliminar egresos 
 
-//para eliminar ingreso
-//se pasa como parametro el id para que al recorrer el arreglo se elimine el id correspondiente al elemento que se desea eliminar
-const eliminarIngreso = (id) => {
-    
+const eliminarEgreso = (id) => {
+    let indiceEliminar = egresos.findIndex(egreso => egreso.id === id);
+    egresos.splice(indiceEliminar, 1);
+    cargarCabecero();
+    cargarEgresos();
+}
+
+
+//agregar nuevo elemento a traves del formulario
+let agregarDato = () => {
+    let forma = document.forms['forma'];
+    let tipo = forma['tipo'];
+    let descripcion = forma['descripcion'];
+    let valor = forma['valor'];
+    if (descripcion.value !== '' && valor.valor !== ''){
+        if(tipo.value === 'ingreso'){
+            ingresos.push(new Ingreso(descripcion.value, Number(valor.value)));
+            cargarCabecero();
+            cargarIngresos();
+        }
+        else if (tipo.value === 'egreso'){
+            egresos.push(new Egreso(descripcion.value, Number(valor.value)));
+            cargarCabecero();
+            cargarEgresos();
+        }
+    }
 }
